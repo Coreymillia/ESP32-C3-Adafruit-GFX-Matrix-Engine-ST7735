@@ -1,7 +1,7 @@
 # ESP32-C3 Matrix Engine - ST7735 Edition
 
 A Matrix-style screensaver with 113 effects and 22 fonts, ported to ESP32-C3 SuperMini with 1.77" ST7735 TFT display.
-
+Making 2,486 variations
 ## Hardware
 
 - **ESP32-C3 SuperMini** (160MHz RISC-V, 320KB RAM, 4MB Flash)
@@ -66,7 +66,7 @@ The code implements exactly **113 matrix rain variations** including:
 ### 22 Fonts with Auto-Cycling
 - **Original 12 fonts**: FreeSans, FreeMono, FreeSerif in various sizes
 - **10 NEW fonts added**: Picopixel, Org_01, italic variations, bold italic combinations
-- **Auto font cycling**: Changes every 30 seconds during compatible effects
+- **Auto font cycling**: Changes after mode 107
 
 ### Controls
 - **Boot Button (GPIO 9)**: Cycle through all 113 effects
