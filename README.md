@@ -6,7 +6,7 @@ Making 2,486 variations
 
 - **ESP32-C3 SuperMini** (160MHz RISC-V, 320KB RAM, 4MB Flash)
 - **1.77" ST7735 TFT** (160x128 pixels, landscape orientation)
-- **Dual button control** (boot button + external button)
+- **Dual button control** (boot button + external touchpad TTP223B Digital Touch Sensor Capacitive Touch Switch Module)
 
 ### Wiring
 ```
@@ -20,7 +20,7 @@ GPIO 2  (RST)  → RES/RST
 GND            → GND
 
 Optional:
-GPIO 3  → External Button (to GND)
+GPIO 3  → External pad (to GND)
 GPIO 9  → Boot Button (built-in)
 ```
 
@@ -106,6 +106,7 @@ This is a **matrix screensaver** - it displays cascading digital rain effects li
 No other screensaver types - just matrix rain perfected with 113 variations.
 
 ## Version History
+- **v2.1** (Jan 18, 2026): Added touch pad
 - **v2.0** (Jan 13, 2026): Added 10 new fonts (12→22 total)
 - **v1.0** (Jan 12, 2026): 113 matrix effects, 12 fonts
 
