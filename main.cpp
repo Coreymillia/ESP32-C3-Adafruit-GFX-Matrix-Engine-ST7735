@@ -36,8 +36,8 @@
 // Boot button on ESP32-C3 SuperMini
 #define BOOT_PIN 9  // ESP32-C3 boot button
 
-// External button module
-#define EXT_BUTTON_PIN 3  // External button connected to GPIO 3
+// TTP223B Digital Touch Sensor
+#define TOUCH_SENSOR_PIN 3  // TTP223B touch sensor connected to GPIO 3
 
 // Display setup for 1.77" ST7735 (128x160)
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
@@ -194,7 +194,7 @@ unsigned long buttonPressStart = 0;
 bool buttonHeld = false;
 const unsigned long longPressTime = 1000; // 1 second for long press
 
-// External button state variables
+// Touch sensor state variables
 unsigned long extButtonPressStart = 0;
 bool extButtonHeld = false;
 
@@ -1752,8 +1752,8 @@ void setup() {
   // Boot button
   pinMode(BOOT_PIN, INPUT_PULLUP);
   
-  // External button module
-  pinMode(EXT_BUTTON_PIN, INPUT_PULLUP);
+  // TTP223B Digital Touch Sensor
+  pinMode(TOUCH_SENSOR_PIN, INPUT);
   
   // Initialize matrix effects
   randomSeed(analogRead(A0));
@@ -1771,7 +1771,7 @@ void setup() {
   Serial.println("Button Controls:");
   Serial.println("- Short press: Cycle to next matrix effect");
   Serial.println("- Long press (1s+): Toggle auto-scroll ON/OFF");
-  Serial.println("- Boot button: GPIO 9, External button: GPIO 3");
+  Serial.println("- Boot button: GPIO 9, Touch sensor: GPIO 3");
   Serial.println("Auto-scroll: ENABLED (30s per mode)");
   
   lastModeSwitch = millis();
@@ -8143,8 +8143,8 @@ void loop() {
   }
   lastButtonState = currentButtonState;
   
-  // External button with both short press (mode switch) and long press (auto-scroll toggle)
-  if (digitalRead(EXT_BUTTON_PIN) == LOW) {
+  // TTP223B Touch Sensor with both short press (mode switch) and long press (auto-scroll toggle)
+  if (digitalRead(TOUCH_SENSOR_PIN) == HIGH) {
     if (!extButtonHeld && (millis() - lastPress > 300)) {
       extButtonPressStart = millis();
       extButtonHeld = true;
@@ -8169,7 +8169,8 @@ void loop() {
     // Check for long press (auto-scroll toggle)
     if (extButtonHeld && (millis() - extButtonPressStart > longPressTime) && !touchPressed) {
       autoScroll = !autoScroll;
-      Serial.printf("External Button - Auto-scroll %s\n", autoScroll ? "ENABLED (30s per mode)" : "DISABLED");
+      touchPressed = true; // Immediately prevent multiple toggles
+      Serial.printf("Touch sensor long press - Auto-scroll %s\n", autoScroll ? "ENABLED (30s per mode)" : "DISABLED");
       
       // Visual feedback (adjusted for landscape 160x128)
       gfx->fillRect(0, 0, 160, 20, autoScroll ? 0x07E0 : 0xF800); // Green or Red
@@ -8177,17 +8178,16 @@ void loop() {
       gfx->setTextSize(1);
       gfx->setCursor(5, 6);
       gfx->printf("AUTO-SCROLL: %s", autoScroll ? "ON" : "OFF");
-      delay(200);
+      delay(500); // Longer delay to prevent rapid toggling
       gfx->fillRect(0, 0, 160, 20, BLACK); // Clear message
       
       lastModeSwitch = millis(); // Reset timer
       lastPress = millis();
-      touchPressed = true; // Prevent immediate mode switch
     }
-  } else if (digitalRead(EXT_BUTTON_PIN) == HIGH) {
+  } else if (digitalRead(TOUCH_SENSOR_PIN) == LOW) {
     // Button released - check for short press (mode switch)
     if (extButtonHeld && (millis() - extButtonPressStart < longPressTime) && !touchPressed && (millis() - lastPress > 300)) {
-      Serial.println("External button short press - switching mode");
+      Serial.println("Touch sensor short press - switching mode");
       
       // Same mode switch logic as boot button
       currentMode = (EffectMode)((currentMode + 1) % TOTAL_MODES);
